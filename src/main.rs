@@ -27,6 +27,7 @@ use std::{
     collections::HashMap,
     env::args,
     fmt,
+    fmt::Write,
     fmt::{Display, Formatter},
     fs::File,
     // io::{Read, Seek, SeekFrom},
@@ -67,9 +68,16 @@ struct MeasurementParseError;
 
 impl Display for Aggregate {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-        let printable = self.result.iter().map(|(key, value)| format!("{}={}\n", key, value))
-            .collect::<Vec<_>>()
-            .join("\n");
+        let printable = self
+            .result
+            .iter()
+            .fold(String::new(), |mut out, (key, value)| {
+                let _ = writeln!(&mut out, "{}={}", key, value);
+                out
+            });
+        // let printable = self.result.iter().map(|(key, value)| format!("{}={}\n", key, value))
+        //     .collect::<Vec<_>>()
+        //     .join("\n");
         write!(f, "{}", printable)
     }
 }
